@@ -41,7 +41,6 @@ router.put("/:id", async (req, res) => {
 
 
 //delete post 
-
 router.delete("/:id", async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
@@ -57,6 +56,27 @@ router.delete("/:id", async (req, res) => {
         }
     } catch (err) {
         res.status(500).json(err);
+    }
+});
+
+
+//get  post all
+router.get("/getAllPosts", async (req, res) => {
+    try {
+        const posts = await Post.find();
+        res.status(200).json(posts);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+//post like API
+router.post("/:id/like",async(req, res)=>{
+    try{
+        const posts = await Post.findById(req.params.id);
+        if(!this.post.likes.includes(req.body.userId)){
+            await this.post.updateOne({$Push{likes:req.body.userId}});
+        }
     }
 });
 
