@@ -1,4 +1,4 @@
-const router = require('router');
+const router = require('express').Router();
 const User = require('../models/User');
 
 
@@ -6,8 +6,10 @@ const User = require('../models/User');
 router.get("/friends/:userId", async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
-        const friends = await Promise.all(user.followings.map((friend_id) => {
-            return User.findById(friend_id);
+        const friends = await Promise.all(user.followings.map((friendId) => {
+               if(!friendId) return
+                return User.findById(friendId);
+            // return User.findById(friend_id);
         }));
         let friendsList = [];
         friends.map((friend) => {
