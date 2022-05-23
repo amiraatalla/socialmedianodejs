@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const authRoute = require('./routes/auth');
 const postRoute = require('./routes/posts');
+const userRoute = require('./routes/user');
 
 const app = express();
 dotenv.config();
@@ -14,6 +15,7 @@ app.use(express.json());
 //All API Routes
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
+app.use("/api/user", postRoute);
 
 //connect with mongoDB Database
 mongoose.connect(process.env.MONGO_DB_URL, {
