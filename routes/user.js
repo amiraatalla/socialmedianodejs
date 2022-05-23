@@ -24,7 +24,7 @@ router.get("/friends/:userId", async (req, res) => {
 router.put("/follow/:id", async (req, res) => {
     if (req.body.userId != req.params.id) {
         try {
-            const user = await User.findById({ req.params.id });
+            const user = await User.findById(req.params.id);
             const currentUser = await User.findById(req.body.userId);
             if (!user.followers.includes(req.body.userId)) {
                 await User.updateOne({ $push: { followers: req.body.userId } });
@@ -46,7 +46,7 @@ router.put("/follow/:id", async (req, res) => {
 router.put("/unfollow/:id", async (req, res) => {
     if (req.body.userId != req.params.id) {
         try {
-            const user = await User.findById({ req.params.id });
+            const user = await User.findById(req.params.id);
             const currentUser = await User.findById(req.body.userId);
             if (!user.followers.includes(req.body.userId)) {
                 await User.updateOne({ $pull: { followers: req.body.userId } });
