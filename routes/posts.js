@@ -97,21 +97,6 @@ router.post("/like/:id", async (req, res) => {
     } catch (e) {
         res.sendStatus(500);
     }
-
-
-    // try {
-    //     const post = await Post.findById(req.params.id);
-    //     if (!this.post.likes.includes(req.body.userId)) {
-    //         await this.post.updateOne({ $Push: { likes: req.body.userId } });
-    //         res.status(200).json("the post has been liked");
-    //     }
-    //     else {
-    //         await this.post.updateOne({ $pull: { likes: req.body.userId } });
-    //         res.status(200).json("the post has been disliked");
-    //     }
-    // } catch (err) {
-    //     res.status(500).json(err);
-    // };
 });
 
 
@@ -147,7 +132,8 @@ router.get("/timeLine/:userId", async (req, res) => {
 router.get("/profile/:username", async (req, res) => {
     try {
         const user = await User.findOne({ username: req.params.username });
-        const post = await Post.findById({ userId: user._id });
+        const post = await Post.find({ userId: user._id});
+
         res.status(200).json(post);
     } catch (err) {
         res.status(500).json(err);
