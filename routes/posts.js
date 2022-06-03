@@ -18,66 +18,23 @@ router.post("/new", async (req, res) => {
 });
 
 
-//update post
-// router.put("/:id", async (req, res) => {
-//     try {
-//         const post = await Post.findById(req.params.id);
-//         if (post.userId === req.body.userId) {
-//             await post.updateOne({
-//                 $set: req.body
-//             });
-//             return res.status(200).json({
-//                 "message": "Post Updated successfully!!",
-//                 "data": post
-//             });
-//         }
-//         else {
-//             return res.status(403).json("You can only update your posts !");
-//         }
-//     } catch (err) {
-//         return res.status(500).json(err);
-//     };
-// });
-
-
-//delete post 
-// router.delete("/:id", async (req, res) => {
-//     try {
-//         const post = await Post.findById(req.params.id);
-//         if (post.userId === req.body.userId) {
-//             await post.deleteOne(
-//                 {
-//                     $set: req.body
-//                 },
-//                 { new: true });
-//             res.status(200).json("Your Post has been deleted!!");
-//         } else {
-//             res.status(403).json("You can only delete your posts")
-//         }
-//     } catch (err) {
-//         res.status(500).json(err);
-//     }
-// });
-router.put("/:id", async (req, res) => {
+router.put("/:id/:userId", async (req, res) => {
     try {
         const post = Post.findById(req.params.id);
-        if (post.userId == req.body.userId._id) {
-            const postUpdated = await Post.findOneAndUpdate(
-                {
-                    _id:  req.params.id
-                },
-                req.body,
-                { new: true }
-            );
+        const postUpdated = await Post.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                userId: req.params.userId
+            },
+            req.body,
+            { new: true }
+        );
 
-            if (!postUpdated) {
-                throw new Error('could not update Post');
-            }
-            res.json(postUpdated);
+        if (!postUpdated) {
+            throw new Error('could not update Post');
         }
-        else {
-            res.status(403).json("You can only delete your posts");
-        }
+        res.json(postUpdated);
+    
     } catch (e) {
         res.sendStatus(500);
     }
