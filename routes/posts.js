@@ -20,7 +20,7 @@ router.post("/new", async (req, res) => {
 
 router.put("/:id/:userId", async (req, res) => {
     try {
-        const post = Post.findById(req.params.id);
+        const post = await Post.findById(req.params.id);
         const postUpdated = await Post.findOneAndUpdate(
             {
                 _id: req.params.id,
@@ -34,16 +34,15 @@ router.put("/:id/:userId", async (req, res) => {
             throw new Error('could not update Post');
         }
         res.json(postUpdated);
-    
+
     } catch (e) {
         res.sendStatus(500);
     }
-
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
     const id = req.params.id;
-    const post = Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id);
     if (post.userId === req.body.userId) {
         Post.findByIdAndDelete(id, (err, data) => {
             if (err) {
@@ -75,19 +74,47 @@ router.get("/getAllPosts", async (req, res) => {
 
 //post like/dislike API
 router.post("/like/:id", async (req, res) => {
+
     try {
-        const posts = await Post.findById(req.params.id);
+        const post = await Post.findById(req.params.id);
         if (!this.post.likes.includes(req.body.userId)) {
-            await this.post.updateOne({ $Push: { likes: req.body.userId } });
-            res.status(200).json("the post has been liked");
+            const like = await Post.findOneAndUpdate(
+                { _id: req.params.id },
+                { $push: { likes: req.body.userId } },
+                { new: true }
+            );
+            res.json(like);
         }
-        else {
-            await this.post.updateOne({ $pull: { likes: req.body.userId } });
-            res.status(200).json("the post has been disliked");
-        }
-    } catch (err) {
-        res.status(500).json(err);
-    };
+        // else {
+        //     const dislike = await Post.findOneAndUpdate(
+        //         {
+        //             _id: req.params.id,
+        //         },
+        //         { likes: { $pull: { likes: req.body.userId } } }
+        //         ,
+        //         { new: true }
+        //     );
+        //     res.json(dislike);
+        // }
+
+    } catch (e) {
+        res.sendStatus(500);
+    }
+
+
+    // try {
+    //     const post = await Post.findById(req.params.id);
+    //     if (!this.post.likes.includes(req.body.userId)) {
+    //         await this.post.updateOne({ $Push: { likes: req.body.userId } });
+    //         res.status(200).json("the post has been liked");
+    //     }
+    //     else {
+    //         await this.post.updateOne({ $pull: { likes: req.body.userId } });
+    //         res.status(200).json("the post has been disliked");
+    //     }
+    // } catch (err) {
+    //     res.status(500).json(err);
+    // };
 });
 
 
