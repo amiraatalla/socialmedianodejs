@@ -7,7 +7,7 @@ router.get("/friends/:userId", async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.params.userId });
         const friends = await Promise.all(user.followings.map((friendId) => {
-               if(!friendId) return
+            if (!friendId)
                 return User.findById(friendId);
             // return User.findById(friend_id);
         }));
@@ -15,25 +15,23 @@ router.get("/friends/:userId", async (req, res) => {
         friends.map((friend) => {
             const { _id, username, profilePicture } = friends;
             friendsList.push({ _id, username, profilePicture });
+            res.status(200).json(friendsList);
         });
-        res.status(200).json(friendsList);
     } catch (err) {
         res.status(500).json(err);
     }
 });
 
 //follow  a user
-router.post("/follow/:id", async (req, res) => {
+router.put("/follow/:id", async (req, res) => {
     if (req.body.userId != req.params.id) {
         try {
-
-           
 
             const user = await User.findById(req.params.id);
             const currentUser = await User.findById(req.body.userId);
             if (!user.followers.includes(req.body.userId)) {
                 await User.updateOne({ $push: { followers: req.body.userId } });
-                await currentUser.updateOne({ $push: { $following: req.params.id } });
+                await currentUser.updateOne({ $push: { $followings: req.params.id } });
                 res.status(200).json("User has been followed");
             }
             else {
@@ -55,7 +53,7 @@ router.put("/unfollow/:id", async (req, res) => {
             const currentUser = await User.findById(req.body.userId);
             if (!user.followers.includes(req.body.userId)) {
                 await User.updateOne({ $pull: { followers: req.body.userId } });
-                await currentUser.updateOne({ $pull: { $following: req.params.id } });
+                await currentUser.updateOne({ $pull: { $followings: req.params.id } });
                 res.status(200).json("User has been unfollowed");
             }
             else {
