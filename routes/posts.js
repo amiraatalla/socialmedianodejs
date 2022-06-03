@@ -72,12 +72,13 @@ router.get("/getAllPosts", async (req, res) => {
     }
 });
 
+
 //post like/dislike API
 router.post("/like/:id", async (req, res) => {
 
     try {
         const post = await Post.findById(req.params.id);
-        if (!this.post.likes.includes(req.body.userId)) {
+        if (!post.likes.includes(req.body.userId)) {
             const like = await Post.findOneAndUpdate(
                 { _id: req.params.id },
                 { $push: { likes: req.body.userId } },
@@ -85,18 +86,14 @@ router.post("/like/:id", async (req, res) => {
             );
             res.json(like);
         }
-        // else {
-        //     const dislike = await Post.findOneAndUpdate(
-        //         {
-        //             _id: req.params.id,
-        //         },
-        //         { likes: { $pull: { likes: req.body.userId } } }
-        //         ,
-        //         { new: true }
-        //     );
-        //     res.json(dislike);
-        // }
-
+        else {
+            const dislike = await Post.findOneAndUpdate(
+                { _id: req.params.id },
+                { $pull: { likes: req.body.userId } },
+                { new: true }
+            );
+            res.json(dislike);
+        }
     } catch (e) {
         res.sendStatus(500);
     }
