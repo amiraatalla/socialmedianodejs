@@ -5,7 +5,7 @@ const User = require('../models/User');
 //friends
 router.get("/friends/:userId", async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId);
+        const user = await User.findOne({ _id: req.params.userId });
         const friends = await Promise.all(user.followings.map((friendId) => {
                if(!friendId) return
                 return User.findById(friendId);
@@ -23,9 +23,12 @@ router.get("/friends/:userId", async (req, res) => {
 });
 
 //follow  a user
-router.put("/follow/:id", async (req, res) => {
+router.post("/follow/:id", async (req, res) => {
     if (req.body.userId != req.params.id) {
         try {
+
+           
+
             const user = await User.findById(req.params.id);
             const currentUser = await User.findById(req.body.userId);
             if (!user.followers.includes(req.body.userId)) {
