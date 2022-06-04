@@ -6,17 +6,16 @@ const User = require('../models/User');
 router.get("/friends/:userId", async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.params.userId });
-        const friends = await Promise.all(user.followings.map((friendId) => {
-            if (!friendId)
-                return User.findById(friendId);
-            // return User.findById(friend_id);
+
+        const friends = await Promise.all(user.followings.map((fri_id) => {
+            return User.findById(fri_id);
         }));
         let friendsList = [];
         friends.map((friend) => {
-            const { _id, username, profilePicture } = friends;
+            const { _id, username, profilePicture } = friend;
             friendsList.push({ _id, username, profilePicture });
-            res.status(200).json(friendsList);
         });
+        res.status(200).json(friendsList);
     } catch (err) {
         res.status(500).json(err);
     }
@@ -30,8 +29,8 @@ router.put("/follow/:id", async (req, res) => {
             const user = await User.findById(req.params.id);
             const currentUser = await User.findById(req.body.userId);
             if (!user.followers.includes(req.body.userId)) {
-                await User.updateOne({ $push: { followers: req.body.userId } });
-                await currentUser.updateOne({ $push: { $followings: req.params.id } });
+                await User.updateOne({ $push: { followers: req.body.userId } }) &&
+                    await currentUser.updateOne({ $push: { $followings: req.params.id } });
                 res.status(200).json("User has been followed");
             }
             else {
@@ -52,8 +51,8 @@ router.put("/unfollow/:id", async (req, res) => {
             const user = await User.findById(req.params.id);
             const currentUser = await User.findById(req.body.userId);
             if (!user.followers.includes(req.body.userId)) {
-                await User.updateOne({ $pull: { followers: req.body.userId } });
-                await currentUser.updateOne({ $pull: { $followings: req.params.id } });
+                await User.updateOne({ $pull: { followers: req.body.userId } }) &&
+                    await currentUser.updateOne({ $pull: { $followings: req.params.id } });
                 res.status(200).json("User has been unfollowed");
             }
             else {
