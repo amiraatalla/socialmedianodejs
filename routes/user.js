@@ -3,6 +3,21 @@ const User = require('../models/User');
 
 
 //friends
+/**
+ * @swagger
+ * /friends/{userId}:
+ *   get:
+ *     parameters:
+ *      - in: path
+ *        name: userId
+ *        required: true
+ *        type: string
+ *        description: Current User ID.
+ *     description: Get all friends by id
+ *     responses:
+ *       200:
+ *         description: Returns the requested friends
+ */
 router.get("/friends/:userId", async (req, res) => {
     try {
         const user = await User.findOne({ _id: req.params.userId });
@@ -22,6 +37,24 @@ router.get("/friends/:userId", async (req, res) => {
 });
 
 //follow  a user
+/**
+ * @swagger
+ * /follow/{id}:
+ *   patch:
+ *     parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: string
+ *        description: friend_id.
+ *      - in: query
+ *        name: userId
+ *        required: true
+ *        description: current_user
+ *     responses:
+ *       200:
+ *         description: User has been followed 
+ */
 router.put("/follow/:id", async (req, res) => {
     if (req.body.userId != req.params.id) {
         try {
@@ -44,6 +77,24 @@ router.put("/follow/:id", async (req, res) => {
 });
 
 //unfollow  a user
+/**
+ * @swagger
+ * /unfollow/{id}:
+ *   patch:
+ *     parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: string
+ *        description: friend_id.
+ *      - in: query
+ *        name: userId
+ *        required: true
+ *        description: current_user
+ *     responses:
+ *       200:
+ *         description: User has been unfollowed 
+ */
 router.put("/unfollow/:id", async (req, res) => {
     if (req.body.userId != req.params.id) {
         try {

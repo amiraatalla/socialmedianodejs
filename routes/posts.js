@@ -4,6 +4,27 @@ const User = require('../models/User');
 
 
 //add post
+/**
+ * @swagger
+ * /new:
+ *   post:
+ *     parameters:
+ *      - in: body
+ *        name: new
+ *        description: New post
+ *        schema:
+ *          type: object
+ *          properties:
+ *            userId:
+ *              type: string,
+ *            desc:
+ *              type: string
+ *            img:
+ *              type: string
+ *     responses:
+ *       201:
+ *         description: Created
+ */
 router.post("/new", async (req, res) => {
     const newPost = new Post(req.body);
     try {
@@ -17,6 +38,32 @@ router.post("/new", async (req, res) => {
     };
 });
 
+/**
+ * @swagger
+ * /{id}/{userId}:
+ *   patch:
+ *     parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: string
+ *        description: post id.
+ *        name: userId
+ *        required: true
+ *        type:string
+ *        description: user id
+ *        -in: body    
+ *         schema:
+ *          type: object
+*                properties:
+*                  desc:
+*                  type: string
+*                  img:
+*                  type: string
+ *     responses:
+ *       201:
+ *         description: Updated
+ */
 
 router.put("/:id/:userId", async (req, res) => {
     try {
@@ -63,6 +110,14 @@ router.delete("/:id", async (req, res) => {
 
 
 //get  post all
+/**
+ * @swagger
+ * /getAllPosts:
+ *   get:
+ *     responses:
+ *       200:
+ *         description: Return all posts
+ */
 router.get("/getAllPosts", async (req, res) => {
     try {
         const posts = await Post.find();
@@ -74,7 +129,25 @@ router.get("/getAllPosts", async (req, res) => {
 
 
 //post like/dislike API
-router.post("/like/:id", async (req, res) => {
+/**
+ * @swagger
+ * /likeAndDislike/{id}:
+ *   post:
+ *     parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        type: string
+ *        description: postId.
+ *      - in: query
+ *        name: userId
+ *        required: true
+ *        description: current_user
+ *     responses:
+ *       200:
+ *         description: like or dislike post
+ */
+router.post("/likeAndDislike/:id", async (req, res) => {
 
     try {
         const post = await Post.findById(req.params.id);
@@ -102,6 +175,8 @@ router.post("/like/:id", async (req, res) => {
 
 
 //get a post
+
+
 router.get("/getAPost/:id", async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
